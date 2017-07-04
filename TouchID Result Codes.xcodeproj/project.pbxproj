@@ -47,6 +47,7 @@
 		BB3DBEA81F0C2E9400DFD17C /* TouchID Result CodesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TouchID Result CodesUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB3DBEAC1F0C2E9400DFD17C /* TouchID_Result_CodesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchID_Result_CodesUITests.swift; sourceTree = "<group>"; };
 		BB3DBEAE1F0C2E9400DFD17C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BBEF981A1F0C51A8009C64CB /* TouchID Result Codes-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TouchID Result Codes-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +104,7 @@
 				BB3DBE931F0C2E9400DFD17C /* Assets.xcassets */,
 				BB3DBE951F0C2E9400DFD17C /* LaunchScreen.storyboard */,
 				BB3DBE981F0C2E9400DFD17C /* Info.plist */,
+				BBEF981A1F0C51A8009C64CB /* TouchID Result Codes-Bridging-Header.h */,
 			);
 			path = "TouchID Result Codes";
 			sourceTree = "<group>";
@@ -193,6 +195,7 @@
 				TargetAttributes = {
 					BB3DBE881F0C2E9400DFD17C = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0900;
 					};
 					BB3DBE9C1F0C2E9400DFD17C = {
 						CreatedOnToolsVersion = 9.0;
@@ -419,11 +422,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = A8NKHWJDUL;
 				INFOPLIST_FILE = "TouchID Result Codes/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.noiseandheat.ios.TouchID-Result-Codes";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TouchID Result Codes/TouchID Result Codes-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -433,11 +439,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = A8NKHWJDUL;
 				INFOPLIST_FILE = "TouchID Result Codes/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.noiseandheat.ios.TouchID-Result-Codes";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "TouchID Result Codes/TouchID Result Codes-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
