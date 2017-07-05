@@ -35,9 +35,10 @@ class ViewController: UIViewController {
         let parameters = [
             kSecClass as String: kSecClassKey,
             kSecAttrKeyClass as String: kSecAttrKeyClassPrivate,
-            kSecAttrApplicationTag as String: signApplicationTag as AnyObject,
+//            kSecAttrApplicationTag as String: signApplicationTag as AnyObject,
             kSecAttrLabel as String : signPrivateLabel as AnyObject,
             kSecReturnRef as String: true,
+            kSecUseOperationPrompt as String: "Psst",
             ] as [String : Any]
         var ref: AnyObject?
         let status = SecItemCopyMatching(parameters as CFDictionary, &ref)
@@ -50,30 +51,34 @@ class ViewController: UIViewController {
     
     func createSigningKey() {
         // private key parameters
-        let maybeAccess = SecAccessControlCreateWithFlags(kCFAllocatorDefault, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, [.touchIDCurrentSet, .privateKeyUsage], nil)
+        let maybeAccess = SecAccessControlCreateWithFlags(
+            kCFAllocatorDefault,
+            kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
+            [.touchIDCurrentSet, .privateKeyUsage],
+            nil)
         guard let access = maybeAccess else {
             fatalError("createSigningKey SecAccessControlCreateWithFlags failed.")
         }
         let privateKeyParams: [String: AnyObject] = [
             kSecAttrIsPermanent as String: true as AnyObject,
             kSecAttrLabel as String : signPrivateLabel as AnyObject,
-            kSecAttrApplicationTag as String: signApplicationTag as AnyObject,
+//            kSecAttrApplicationTag as String: signApplicationTag as AnyObject,
             kSecAttrAccessControl as String: access
         ]
         
         // public key parameters
-        let publicKeyParams: [String: AnyObject] = [
-            kSecAttrIsPermanent as String: false as AnyObject,
-            kSecAttrLabel as String : signPublicLabel as AnyObject,
-            kSecAttrApplicationTag as String: signApplicationTag as AnyObject
-        ]
+//        let publicKeyParams: [String: AnyObject] = [
+//            kSecAttrIsPermanent as String: false as AnyObject,
+//            kSecAttrLabel as String : signPublicLabel as AnyObject,
+//            kSecAttrApplicationTag as String: signApplicationTag as AnyObject
+//        ]
         
         // global parameters
         let parameters: [String: AnyObject] = [
+            kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
             kSecAttrKeyType as String: kSecAttrKeyTypeEC,
             kSecAttrKeySizeInBits as String: 256 as AnyObject,
-            kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
-            kSecPublicKeyAttrs as String: publicKeyParams as AnyObject,
+//            kSecPublicKeyAttrs as String: publicKeyParams as AnyObject,
             kSecPrivateKeyAttrs as String: privateKeyParams as AnyObject
         ]
         
@@ -159,7 +164,7 @@ class ViewController: UIViewController {
         let signature = UnsafeMutablePointer<UInt8>.allocate(capacity: 128)
         var signatureLength = 128
         let status = SecKeyRawSign(privateKey,
-                                .PKCS1SHA1,
+                                .PKCS1,
                                 [UInt8](digestToSign),
                                 Int(CC_SHA1_DIGEST_LENGTH),
                                 signature,
@@ -168,10 +173,11 @@ class ViewController: UIViewController {
         
         print("Signature status: \(status)")
         
-        let sigData = Data(bytes: signature, count: Int(signatureLength))
-        let hexBytes = sigData.map { String(format: "%02hhx", $0) }
-        print("Signature: \(hexBytes)")
-        
+        if status == errSecSuccess {
+            let sigData = Data(bytes: signature, count: Int(signatureLength))
+            let hexBytes = sigData.map { String(format: "%02hhx", $0) }
+            print("Signature: \(hexBytes.joined())")
+        }
     }
     
     func sha1DigestForData(data: Data) -> Data {
