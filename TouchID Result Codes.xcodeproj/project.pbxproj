@@ -14,6 +14,7 @@
 		BB3DBE971F0C2E9400DFD17C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB3DBE951F0C2E9400DFD17C /* LaunchScreen.storyboard */; };
 		BB3DBEA21F0C2E9400DFD17C /* TouchID_Result_CodesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3DBEA11F0C2E9400DFD17C /* TouchID_Result_CodesTests.swift */; };
 		BB3DBEAD1F0C2E9400DFD17C /* TouchID_Result_CodesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3DBEAC1F0C2E9400DFD17C /* TouchID_Result_CodesUITests.swift */; };
+		BBE11D651F0EE6A100D325AA /* UIDevice+MachineName.m in Sources */ = {isa = PBXBuildFile; fileRef = BBE11D641F0EE6A100D325AA /* UIDevice+MachineName.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,8 @@
 		BB3DBEA81F0C2E9400DFD17C /* TouchID Result CodesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TouchID Result CodesUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB3DBEAC1F0C2E9400DFD17C /* TouchID_Result_CodesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchID_Result_CodesUITests.swift; sourceTree = "<group>"; };
 		BB3DBEAE1F0C2E9400DFD17C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BBE11D631F0EE6A100D325AA /* UIDevice+MachineName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDevice+MachineName.h"; sourceTree = "<group>"; };
+		BBE11D641F0EE6A100D325AA /* UIDevice+MachineName.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+MachineName.m"; sourceTree = "<group>"; };
 		BBEF981A1F0C51A8009C64CB /* TouchID Result Codes-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TouchID Result Codes-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,12 +102,14 @@
 			isa = PBXGroup;
 			children = (
 				BB3DBE8C1F0C2E9400DFD17C /* AppDelegate.swift */,
-				BB3DBE8E1F0C2E9400DFD17C /* ViewController.swift */,
-				BB3DBE901F0C2E9400DFD17C /* Main.storyboard */,
 				BB3DBE931F0C2E9400DFD17C /* Assets.xcassets */,
-				BB3DBE951F0C2E9400DFD17C /* LaunchScreen.storyboard */,
 				BB3DBE981F0C2E9400DFD17C /* Info.plist */,
+				BB3DBE951F0C2E9400DFD17C /* LaunchScreen.storyboard */,
+				BB3DBE901F0C2E9400DFD17C /* Main.storyboard */,
 				BBEF981A1F0C51A8009C64CB /* TouchID Result Codes-Bridging-Header.h */,
+				BBE11D631F0EE6A100D325AA /* UIDevice+MachineName.h */,
+				BBE11D641F0EE6A100D325AA /* UIDevice+MachineName.m */,
+				BB3DBE8E1F0C2E9400DFD17C /* ViewController.swift */,
 			);
 			path = "TouchID Result Codes";
 			sourceTree = "<group>";
@@ -259,6 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBE11D651F0EE6A100D325AA /* UIDevice+MachineName.m in Sources */,
 				BB3DBE8F1F0C2E9400DFD17C /* ViewController.swift in Sources */,
 				BB3DBE8D1F0C2E9400DFD17C /* AppDelegate.swift in Sources */,
 			);
@@ -361,7 +367,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -410,7 +416,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";

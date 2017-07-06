@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.16"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -61,14 +62,23 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="igC-yq-i0e">
+                                <rect key="frame" x="166" y="20" width="42" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="igC-yq-i0e" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="PJG-pA-oKn"/>
                             <constraint firstItem="wMr-Mc-5C9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="aPB-Pn-sk6"/>
                             <constraint firstItem="wMr-Mc-5C9" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="hHM-YC-4VV"/>
+                            <constraint firstItem="igC-yq-i0e" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="tdh-sR-bUa"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="machineLabel" destination="igC-yq-i0e" id="ti1-h9-UTL"/>
                         <outlet property="secItemCopyMatchingResult" destination="pfF-c9-mzI" id="iZb-qh-10h"/>
                         <outlet property="secKeyRawSignResult" destination="QLO-yl-2zJ" id="hsv-lH-6p3"/>
                     </connections>
