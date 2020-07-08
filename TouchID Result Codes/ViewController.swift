@@ -127,35 +127,6 @@ extension ViewController {
     
 }
 
-extension ViewController {
-    func performCert() {
-        guard let cert = SecCertificateCreateWithData(nil, certData as CFData) else {
-            print("SecCertificateCreateWithData failed")
-            return
-        }
-        
-        let policy = SecPolicyCreateBasicX509()
-        
-        var trust: SecTrust?
-        let result = SecTrustCreateWithCertificates(cert, policy, &trust)
-        guard result == errSecSuccess else {
-            print("SecTrustCreateWithCertificates failed: \(result)")
-            certResult.text = "Failed"
-            return
-        }
-        
-        guard let _ = SecTrustCopyPublicKey(trust!) else {
-            print("SecTrustCopyPublicKey failed")
-            certResult.text = "Failed"
-            return
-        }
-            
-        print("Got cert public key OK")
-        certResult.text = "OK"
-    }
-}
-
-
 // MARK: - TouchID signing
 extension ViewController {
     private static var signPrivateLabel: String { return "myprivatekey" }
@@ -201,41 +172,6 @@ extension ViewController {
                                                signatureLength)
             print("Verify result: \(verifyResult == 0 ? "Valid" : String(verifyResult))")
         }
-    }
-    
-    func performCrypto() {
-        guard let privateKey = getPrivateKey() else {
-            fatalError("handleSecKeyRawSignTapped private key unavailable")
-        }
-        
-        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
-            fatalError("Could not copy public key")
-        }
-        
-        let plainText = Data("This is totally secret. Shhh! 🦄".utf8)
-
-        var error: Unmanaged<CFError>?
-        guard let cipherText = SecKeyCreateEncryptedData(publicKey, .eciesEncryptionCofactorVariableIVX963SHA256AESGCM, plainText as CFData, &error) else {
-            print("Encryption failed: \(error!.takeRetainedValue() as Error)")
-            cryptoResult.text = "Fail"
-            return
-        }
-        
-        let hexBytes = (cipherText as Data).map { String(format: "%02hhx", $0) }
-        print("Cipher text: \(hexBytes.joined())")
-        
-        guard let decryptedText = SecKeyCreateDecryptedData(privateKey, .eciesEncryptionCofactorVariableIVX963SHA256AESGCM, cipherText, &error) else {
-            print("Decryption failed failed: \(error!.takeRetainedValue() as Error)")
-            cryptoResult.text = "Fail"
-            return
-        }
-
-        let hexBytes2 = (decryptedText as Data).map { String(format: "%02hhx", $0) }
-        print("Decrypted text: \(hexBytes2.joined())")
-
-        print("Crypto success! The secret text is: \(String(data: decryptedText as Data, encoding: .utf8)!)")
-        
-        cryptoResult.text = "OK"
     }
     
     func createSigningKey() {
@@ -300,5 +236,72 @@ extension ViewController {
             _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
         }
         return Data(digest)
+    }
+}
+
+// MARK: - TouchID crypto
+extension ViewController {
+    func performCrypto() {
+        guard let privateKey = getPrivateKey() else {
+            fatalError("handleSecKeyRawSignTapped private key unavailable")
+        }
+        
+        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
+            fatalError("Could not copy public key")
+        }
+        
+        let plainText = Data("This is totally secret. Shhh! 🦄".utf8)
+
+        var error: Unmanaged<CFError>?
+        guard let cipherText = SecKeyCreateEncryptedData(publicKey, .eciesEncryptionCofactorVariableIVX963SHA256AESGCM, plainText as CFData, &error) else {
+            print("Encryption failed: \(error!.takeRetainedValue() as Error)")
+            cryptoResult.text = "Fail"
+            return
+        }
+        
+        let hexBytes = (cipherText as Data).map { String(format: "%02hhx", $0) }
+        print("Cipher text: \(hexBytes.joined())")
+        
+        guard let decryptedText = SecKeyCreateDecryptedData(privateKey, .eciesEncryptionCofactorVariableIVX963SHA256AESGCM, cipherText, &error) else {
+            print("Decryption failed failed: \(error!.takeRetainedValue() as Error)")
+            cryptoResult.text = "Fail"
+            return
+        }
+
+        let hexBytes2 = (decryptedText as Data).map { String(format: "%02hhx", $0) }
+        print("Decrypted text: \(hexBytes2.joined())")
+
+        print("Crypto success! The secret text is: \(String(data: decryptedText as Data, encoding: .utf8)!)")
+        
+        cryptoResult.text = "OK"
+    }
+}
+
+// MARK: - Cert
+extension ViewController {
+    func performCert() {
+        guard let cert = SecCertificateCreateWithData(nil, certData as CFData) else {
+            print("SecCertificateCreateWithData failed")
+            return
+        }
+        
+        let policy = SecPolicyCreateBasicX509()
+        
+        var trust: SecTrust?
+        let result = SecTrustCreateWithCertificates(cert, policy, &trust)
+        guard result == errSecSuccess else {
+            print("SecTrustCreateWithCertificates failed: \(result)")
+            certResult.text = "Failed"
+            return
+        }
+        
+        guard let _ = SecTrustCopyPublicKey(trust!) else {
+            print("SecTrustCopyPublicKey failed")
+            certResult.text = "Failed"
+            return
+        }
+            
+        print("Got cert public key OK")
+        certResult.text = "OK"
     }
 }
