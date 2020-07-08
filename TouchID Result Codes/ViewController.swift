@@ -14,21 +14,33 @@ class ViewController: UIViewController {
     @IBOutlet weak var secItemCopyMatchingResult: UILabel!
     @IBOutlet weak var secKeyRawSignResult: UILabel!
     @IBOutlet weak var cryptoResult: UILabel!
+    @IBOutlet weak var certResult: UILabel!
     @IBOutlet weak var machineLabel: UILabel!
+    
+    var certData: Data!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         storeInKeychain()
         createSigningKey()
+        loadCertData()
     }
     
     func setupUI() {
         secItemCopyMatchingResult.text = ""
         secKeyRawSignResult.text = ""
         cryptoResult.text = ""
-        
+        certResult.text = ""
+
         machineLabel.text = "iOS \(UIDevice.current.systemVersion) - \(UIDevice.trc_machineName())"
+    }
+    
+    func loadCertData() {
+        guard let path = Bundle.main.url(forResource: "apple.com", withExtension: "der") else {
+            fatalError("Could not find cert")
+        }
+        certData = try! Data(contentsOf: path)
     }
     
     @IBAction func handleSecItemCopyMatchingTapped(_ sender: UIButton) {
@@ -49,6 +61,10 @@ class ViewController: UIViewController {
         #else
         performCrypto()
         #endif
+    }
+    
+    @IBAction func handleCertTapped(_ sender: UIButton) {
+        performCert()
     }
 }
 
@@ -110,6 +126,35 @@ extension ViewController {
     }
     
 }
+
+extension ViewController {
+    func performCert() {
+        guard let cert = SecCertificateCreateWithData(nil, certData as CFData) else {
+            print("SecCertificateCreateWithData failed")
+            return
+        }
+        
+        let policy = SecPolicyCreateBasicX509()
+        
+        var trust: SecTrust?
+        let result = SecTrustCreateWithCertificates(cert, policy, &trust)
+        guard result == errSecSuccess else {
+            print("SecTrustCreateWithCertificates failed: \(result)")
+            certResult.text = "Failed"
+            return
+        }
+        
+        guard let _ = SecTrustCopyPublicKey(trust!) else {
+            print("SecTrustCopyPublicKey failed")
+            certResult.text = "Failed"
+            return
+        }
+            
+        print("Got cert public key OK")
+        certResult.text = "OK"
+    }
+}
+
 
 // MARK: - TouchID signing
 extension ViewController {
@@ -176,12 +221,18 @@ extension ViewController {
             return
         }
         
+        let hexBytes = (cipherText as Data).map { String(format: "%02hhx", $0) }
+        print("Cipher text: \(hexBytes.joined())")
+        
         guard let decryptedText = SecKeyCreateDecryptedData(privateKey, .eciesEncryptionCofactorVariableIVX963SHA256AESGCM, cipherText, &error) else {
             print("Decryption failed failed: \(error!.takeRetainedValue() as Error)")
             cryptoResult.text = "Fail"
             return
         }
-        
+
+        let hexBytes2 = (decryptedText as Data).map { String(format: "%02hhx", $0) }
+        print("Decrypted text: \(hexBytes2.joined())")
+
         print("Crypto success! The secret text is: \(String(data: decryptedText as Data, encoding: .utf8)!)")
         
         cryptoResult.text = "OK"
