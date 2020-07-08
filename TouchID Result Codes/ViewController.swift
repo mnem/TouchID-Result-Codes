@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var secItemCopyMatchingResult: UILabel!
     @IBOutlet weak var secKeyRawSignResult: UILabel!
+    @IBOutlet weak var cryptoResult: UILabel!
     @IBOutlet weak var machineLabel: UILabel!
     
     override func viewDidLoad() {
@@ -25,6 +26,7 @@ class ViewController: UIViewController {
     func setupUI() {
         secItemCopyMatchingResult.text = ""
         secKeyRawSignResult.text = ""
+        cryptoResult.text = ""
         
         machineLabel.text = "iOS \(UIDevice.current.systemVersion) - \(UIDevice.trc_machineName())"
     }
@@ -34,7 +36,19 @@ class ViewController: UIViewController {
     }
     
     @IBAction func handleSecKeyRawSignTapped(_ sender: UIButton) {
+        #if targetEnvironment(simulator)
+        print("Not available on simulator")
+        #else
         performSecKeyRawSign()
+        #endif
+    }
+    
+    @IBAction func handleCryptoTapped(_ sender: UIButton) {
+        #if targetEnvironment(simulator)
+        print("Not available on simulator")
+        #else
+        performCrypto()
+        #endif
     }
 }
 
@@ -128,10 +142,55 @@ extension ViewController {
             let sigData = Data(bytes: signature, count: Int(signatureLength))
             let hexBytes = sigData.map { String(format: "%02hhx", $0) }
             print("Signature: \(hexBytes.joined())")
+            
+            // Validate the signature
+            guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
+                fatalError("Could not copy public key")
+            }
+            
+            let verifyResult = SecKeyRawVerify(publicKey,
+                                               .PKCS1,
+                                                [UInt8](digestToSign),
+                                               Int(CC_SHA1_DIGEST_LENGTH),
+                                               signature,
+                                               signatureLength)
+            print("Verify result: \(verifyResult == 0 ? "Valid" : String(verifyResult))")
         }
     }
     
+    func performCrypto() {
+        guard let privateKey = getPrivateKey() else {
+            fatalError("handleSecKeyRawSignTapped private key unavailable")
+        }
+        
+        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
+            fatalError("Could not copy public key")
+        }
+        
+        let plainText = Data("This is totally secret. Shhh! 🦄".utf8)
+
+        var error: Unmanaged<CFError>?
+        guard let cipherText = SecKeyCreateEncryptedData(publicKey, .eciesEncryptionCofactorVariableIVX963SHA256AESGCM, plainText as CFData, &error) else {
+            print("Encryption failed: \(error!.takeRetainedValue() as Error)")
+            cryptoResult.text = "Fail"
+            return
+        }
+        
+        guard let decryptedText = SecKeyCreateDecryptedData(privateKey, .eciesEncryptionCofactorVariableIVX963SHA256AESGCM, cipherText, &error) else {
+            print("Decryption failed failed: \(error!.takeRetainedValue() as Error)")
+            cryptoResult.text = "Fail"
+            return
+        }
+        
+        print("Crypto success! The secret text is: \(String(data: decryptedText as Data, encoding: .utf8)!)")
+        
+        cryptoResult.text = "OK"
+    }
+    
     func createSigningKey() {
+        #if targetEnvironment(simulator)
+        print("Not available on simulator")
+        #else
         // private key parameters
         let maybeAccess = SecAccessControlCreateWithFlags(
             kCFAllocatorDefault,
@@ -164,6 +223,7 @@ extension ViewController {
         } else {
             fatalError("createSigningKey SecKeyGeneratePair failed: \(status)")
         }
+        #endif
     }
     
     func getPrivateKey() -> SecKey? {
@@ -186,8 +246,8 @@ extension ViewController {
     func sha1DigestForData(data: Data) -> Data {
         var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
         data.withUnsafeBytes {
-            _ = CC_SHA1($0, CC_LONG(data.count), &digest)
+            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
         }
-        return Data(bytes: digest)
+        return Data(digest)
     }
 }

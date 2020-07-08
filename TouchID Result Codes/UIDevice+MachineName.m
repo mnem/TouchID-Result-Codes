@@ -8,6 +8,7 @@
 
 #import "UIDevice+MachineName.h"
 #import <sys/utsname.h>
+#import <memory.h>
 
 @implementation UIDevice (MachineName)
 
